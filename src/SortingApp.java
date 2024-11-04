@@ -91,14 +91,14 @@ public class SortingApp {
             jframe.add(executionTimeLabels[i]);
         }
 
-        JLabel status = new JLabel("Best Algorithm : ", JLabel.CENTER);
+        JLabel status = new JLabel("Best Algorithm :- ", JLabel.CENTER);
         status.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 15));
-        status.setBounds(180, 540, 150, 30);
+        status.setBounds(150, 540, 150, 30);
         jframe.add(status);
 
         JLabel bestAlgorithmLabel = new JLabel("", JLabel.CENTER);
         bestAlgorithmLabel.setFont(new Font("Arial", Font.ITALIC, 15));
-        bestAlgorithmLabel.setBounds(320, 540, 150, 30);
+        bestAlgorithmLabel.setBounds(280, 540, 180, 30);
         jframe.add(bestAlgorithmLabel);
 
         // Action for choose file button
@@ -181,18 +181,21 @@ public class SortingApp {
         // Actions for Download Sorted Data buttons
         for (int i = 0; i < downloadButtons.length; i++) {
             final int index = i;
+            final JComboBox<String> finalColumnDropdown = columnDropdown; // Capture the dropdown for use in the listener
             downloadButtons[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (!sortedDataList.isEmpty()) {
+                        String columnName = (String) finalColumnDropdown.getSelectedItem(); // Get the selected column name
                         JFileChooser saveFileChooser = new JFileChooser();
                         saveFileChooser.setDialogTitle("Save Sorted Data");
-                        saveFileChooser.setSelectedFile(new File("sorted_data.csv"));
+                        saveFileChooser.setSelectedFile(new File(algorithms[index].replace(" ", "_") + "_sorted_data.csv"));
+
                         int userSelection = saveFileChooser.showSaveDialog(jframe);
 
                         if (userSelection == JFileChooser.APPROVE_OPTION) {
                             File fileToSave = saveFileChooser.getSelectedFile();
-                            saveSortedData(fileToSave, sortedDataList.get(index)); // Save the specific sorted data
+                            saveSortedData(fileToSave, sortedDataList.get(index), columnName); // Pass the column name
                             JOptionPane.showMessageDialog(jframe, "File saved successfully!");
                         }
                     } else {
@@ -223,7 +226,6 @@ public class SortingApp {
                 for (int i = 0; i < headers.length; i++) {
                     if (i >= values.length || !isNumeric[i]) continue;
                     try {
-                        //Double.parseDouble(values[i].trim());
                         Double.valueOf(values[i].trim());
                     } catch (NumberFormatException e) {
                         isNumeric[i] = false;
@@ -274,9 +276,9 @@ public class SortingApp {
     }
 
     // Method to save sorted data to a CSV file
-    private static void saveSortedData(File file, ArrayList<Double> data) {
+    private static void saveSortedData(File file, ArrayList<Double> data, String columnName) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-            writer.println("Sorted Data");
+            writer.println(columnName); // Use the selected column name
             for (Double value : data) {
                 writer.println(value);
             }
