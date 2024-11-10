@@ -9,20 +9,28 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class SortingApp {
 
-    private static File selectedFile; // Store the selected CSV file
-    private static ArrayList<Double> unsortedData; // Store unsorted data from selected column
-    private static ArrayList<ArrayList<Double>> sortedDataList = new ArrayList<>(); // Store sorted data for each algorithm
-    private static double[] executionTimes = new double[5]; // Store execution times for each algorithm
+    private static File selectedFile; 
+    private static ArrayList<Double> unsortedData; 
+    private static ArrayList<ArrayList<Double>> sortedDataList = new ArrayList<>(); 
+    private static double[] executionTimes = new double[5]; 
 
     public static void main(String[] args) {
         // Create the JFrame
-        JFrame jframe = new JFrame();
+        JFrame jframe = new JFrame();      // Create a new JFrame
         jframe.setSize(600, 650);
         jframe.setLocation(500, 100);
         jframe.setTitle("Java Sorting Application");
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jframe.setLayout(null);  // Use null layout for absolute positioning
+        jframe.setLayout(null);  
         jframe.setResizable(false);
+
+        try {
+            ImageIcon icon = new ImageIcon(SortingApp.class.getResource("/image.png")); //Add an app icon
+            jframe.setIconImage(icon.getImage());
+        } catch (Exception e) {
+            System.out.println("Icon not found!");
+        }
+
 
         // Title label
         JLabel titleLabel = new JLabel("JAVA SORTING APPLICATION", JLabel.CENTER);
@@ -75,7 +83,7 @@ public class SortingApp {
         JLabel[] executionTimeLabels = new JLabel[algorithms.length];
 
         for (int i = 0; i < algorithms.length; i++) {
-            algorithmLabels[i] = new JLabel(algorithms[i] + " : ", JLabel.LEFT);
+            algorithmLabels[i] = new JLabel(algorithms[i] + " : ", JLabel.LEFT);  //Status Table
             algorithmLabels[i].setFont(new Font("Arial", Font.BOLD, 12));
             algorithmLabels[i].setBounds(50, 320 + (i * 40), 100, 30);
             jframe.add(algorithmLabels[i]);
@@ -102,11 +110,11 @@ public class SortingApp {
         jframe.add(bestAlgorithmLabel);
 
         // Action for choose file button
-        chooseFileButton.addActionListener(new ActionListener() {
+        chooseFileButton.addActionListener(new ActionListener() {   //Choose CSV File
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
+                fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));// Filter for CSV files
 
                 int result = fileChooser.showOpenDialog(jframe);
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -124,7 +132,7 @@ public class SortingApp {
         });
 
         // Action for Start Sorting button
-        startsort.addActionListener(new ActionListener() {
+        startsort.addActionListener(new ActionListener() { //Sorting Function
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedColumn = (String) columnDropdown.getSelectedItem();
@@ -133,29 +141,29 @@ public class SortingApp {
                     sortedDataList.clear(); // Clear previous results
 
                     // Execute sorting algorithms
-                    for (int i = 0; i < algorithms.length; i++) {
+                    for (int i = 0; i < algorithms.length; i++) {  //
                         ArrayList<Double> sortedData = new ArrayList<>(unsortedData); // Copy unsorted data
 
                         long startTime = System.nanoTime();
-                        switch (i) {
+                        switch (i) {                               
                             case 0:
-                                new InsertionSort().insertionSort(sortedData);
+                                new InsertionSort().insertionSort(sortedData);  //Call Insertion Sort algorithm
                                 break;
                             case 1:
-                                new ShellSort().sort(sortedData);
+                                new ShellSort().sort(sortedData);  //Call Shell Sort algorithm
                                 break;
                             case 2:
-                                new MergeSort().sort(sortedData);
+                                new MergeSort().sort(sortedData);  //Call Merge Sort algorithm
                                 break;
                             case 3:
-                                new HeapSort().sort(sortedData);
+                                new HeapSort().sort(sortedData);  //Call Heap Sort algorithm
                                 break;
                             case 4:
-                                new QuickSort().sort(sortedData);
+                                new QuickSort().sort(sortedData);  //Call Quick Sort algorithm
                                 break;
                         }
                         long endTime = System.nanoTime();
-                        double executionTimeMillis = (endTime - startTime) / 1_000_000.0;
+                        double executionTimeMillis = (endTime - startTime) / 1_000_000.0; //Calculate execution time
 
                         executionTimes[i] = executionTimeMillis;
                         executionTimeLabels[i].setText(String.format("%.2f ms", executionTimeMillis));
@@ -165,7 +173,7 @@ public class SortingApp {
                     // Determine best algorithm
                     double bestTime = Double.MAX_VALUE;
                     int bestIndex = 0;
-                    for (int i = 0; i < executionTimes.length; i++) {
+                    for (int i = 0; i < executionTimes.length; i++) {   //Find the best algorithm
                         if (executionTimes[i] < bestTime) {
                             bestTime = executionTimes[i];
                             bestIndex = i;
@@ -188,12 +196,12 @@ public class SortingApp {
                     if (!sortedDataList.isEmpty()) {
                         String columnName = (String) finalColumnDropdown.getSelectedItem(); // Get the selected column name
                         JFileChooser saveFileChooser = new JFileChooser();
-                        saveFileChooser.setDialogTitle("Save Sorted Data");
+                        saveFileChooser.setDialogTitle("Save Sorted Data"); 
                         saveFileChooser.setSelectedFile(new File(algorithms[index].replace(" ", "_") + "_sorted_data.csv"));
 
                         int userSelection = saveFileChooser.showSaveDialog(jframe);
 
-                        if (userSelection == JFileChooser.APPROVE_OPTION) {
+                        if (userSelection == JFileChooser.APPROVE_OPTION) {    //Save Sorted Data
                             File fileToSave = saveFileChooser.getSelectedFile();
                             saveSortedData(fileToSave, sortedDataList.get(index), columnName); // Pass the column name
                             JOptionPane.showMessageDialog(jframe, "File saved successfully!");
@@ -205,8 +213,8 @@ public class SortingApp {
             });
         }
 
-        // Set frame visibility
-        jframe.setVisible(true);
+
+        jframe.setVisible(true);        // Set frame visibility
     }
 
     // Method to get numeric columns from the CSV file
@@ -242,7 +250,7 @@ public class SortingApp {
         return numericColumns;
     }
 
-    // Method to retrieve data for a specific column from the CSV file
+    // Method to retrieve data from selected column of the CSV file
     private static ArrayList<Double> getColumnData(File file, String column) {
         ArrayList<Double> data = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
